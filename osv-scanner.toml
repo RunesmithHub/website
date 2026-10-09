@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2027-01-31
+reason = "braces has no fixed release; it is reached only through eslint-config-next globbing this repository's own paths."

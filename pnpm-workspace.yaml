@@ -1,0 +1,15 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
+blockExoticSubdeps: true
+strictDepBuilds: true
+allowBuilds:
+  unrs-resolver: false
+ignoredOptionalDependencies:
+  - sharp
+savePrefix: ''
+engineStrict: true
+audit:
+  ignore:
+    # braces <=3.0.3 has no fixed release; reached only through eslint-config-next's glob of this repository's own paths. Remove by 2027-01-31.
+    - GHSA-vfj7-8cjw-p6xm

@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.hub/
+public/hub/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
+tests/fixtures/.generated/
+.osv/
