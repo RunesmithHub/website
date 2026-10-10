@@ -150,6 +150,10 @@ export const TRIGGER_LABELS: Readonly<Record<string, string>> = {
   "release-author": "Released by someone who isn't a maintainer",
   "name-changed": "Display name changed",
   "previous-restricted": "Previous version was blocked or frozen",
+  license: "A bundled license may not combine with the plugin's",
+  "contracts-content": "Contracts hold more than a public API",
+  "web-content": "New or changed web view code",
+  "network-host-added": "Gains a network host",
   tier: "Every version of this tier is reviewed",
 };
 
