@@ -11,7 +11,15 @@ export function runsOn(rangeText: string, api: string, oldestApi: string): boole
   return satisfies(provided, range) && minimum !== null && compareVersions(minimum, oldest) >= 0;
 }
 
-export function apiRangeText(rangeText: string): string {
+export function supportedApis(rangeText: string, apiVersions: readonly string[], oldestApi: string): string[] {
+  return apiVersions.filter((api) => runsOn(rangeText, api, oldestApi));
+}
+
+export function describeApiRange(rangeText: string): string {
   const range = parseRange(rangeText);
-  return range ? `Runesmith API ${describeRange(range)}` : `Runesmith API ${rangeText}`;
+  return range ? describeRange(range) : rangeText;
+}
+
+export function apiRangeText(rangeText: string): string {
+  return `Plugin API ${describeApiRange(rangeText)}`;
 }

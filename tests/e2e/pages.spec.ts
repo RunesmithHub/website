@@ -48,6 +48,18 @@ test("notices for frozen, deprecated and deleted plugins", async ({ page }) => {
   await expect(page.getByTestId("blocked-version")).toContainText("Vulnerability");
 });
 
+test("compatibility labels speak about the plugin API", async ({ page }) => {
+  await page.goto("/plugins/runesmith.csharp");
+  const sidebar = page.getByRole("complementary", { name: "About this plugin" });
+  await expect(sidebar).toContainText("Works with plugin API 0.1.1");
+  await expect(sidebar).toContainText("Plugin API 0.1.1 to below 0.2.0");
+  await page.goto("/plugins/atlas.rest");
+  await expect(page.getByText("Needs plugin API 0.2.0 to below 0.3.0")).toBeVisible();
+  await page.goto("/");
+  await expect(page.getByText("Works with plugin API 0.1.1").first()).toBeVisible();
+  await expect(page.getByText(/Works with Runesmith/)).toHaveCount(0);
+});
+
 test("the moderation dashboard loads its summary at runtime", async ({ page }) => {
   await page.goto(PAGES.moderation);
   const dashboard = page.getByTestId("dashboard");

@@ -43,6 +43,8 @@ jobs:
         run: pnpm lint
       - name: Type check
         run: pnpm typecheck
+      - name: Unit tests
+        run: node --test "tests/unit/*.test.ts"
       - name: Build without an index
         run: env -u HUB_INDEX_DIR -u HUB_TRUST_ROOT pnpm build
       - name: Generate the fixture index

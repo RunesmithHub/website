@@ -40,7 +40,7 @@ it and adds what only the build knows to the copy inside the package. Unknown fi
 | `license` | Yes | An SPDX expression of OSI-approved licenses, matching `LICENSE` |
 | `repository` | Yes | `https://github.com/<owner>/<repo>`, matching your registration |
 | `homepage` | No | An `https://` address |
-| `runesmithApi` | Yes | The Runesmith API [range](/publish/versions) you support, within one compatibility line |
+| `runesmithApi` | Yes | The plugin API [range](/publish/versions) you support, within one compatibility line |
 | `projects` | Yes | Relative paths to the contracts and implementation project files |
 | `dependencies` | No | Up to 32 plugins, each with an ID and a range. See [Dependencies](/publish/dependencies) |
 | `capabilities` | No | Each with an ID and a reason of at most 160 characters. See [Capabilities](/publish/capabilities) |

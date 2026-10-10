@@ -28,7 +28,7 @@ export function PluginCard({ plugin }: { plugin: PluginView }) {
           {plugin.installs !== null && ` · ${formatCount(plugin.installs)} installs`}
         </p>
         <p className="text-muted-foreground mt-1 mb-0 text-[12.5px] leading-snug">{plugin.summary}</p>
-        {plugin.latest && <CompatLabel compatible={plugin.compatible} className="mt-1.5" />}
+        {plugin.latest && <CompatLabel compatible={plugin.compatible} range={plugin.apiRange} className="mt-1.5" />}
       </div>
     </article>
   );

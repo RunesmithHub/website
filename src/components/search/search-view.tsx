@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { compareResults, score, type SortOrder } from "@/lib/search/score";
-import { EMPTY_STATE, matchesFilters, readState, writeState, type SearchState } from "@/lib/search/state";
+import { ANY_API, EMPTY_STATE, matchesFilters, readState, selectedApi, writeState, type SearchState } from "@/lib/search/state";
 import { formatCount, formatDate } from "@/lib/site/format";
 import { CAPABILITY_FILTERS, PLATFORM_LABELS, TIER_LABELS } from "@/lib/site/labels";
 import type { CategoryView, SearchDocument, SearchTerms, Tier } from "@/lib/site/types";
@@ -27,7 +27,7 @@ const SORT_LABELS: Readonly<Record<SortOrder, string>> = {
 interface SearchViewProps {
   readonly documents: readonly SearchDocument[];
   readonly categories: readonly CategoryView[];
-  readonly runesmithVersion: string;
+  readonly apiVersions: readonly string[];
   readonly fixedCategory?: string;
 }
 
@@ -92,7 +92,7 @@ function CheckRow({ id, label, checked, onChange }: { id: string; label: string;
   );
 }
 
-function Result({ document }: { document: SearchDocument }) {
+function Result({ document, latestApi }: { document: SearchDocument; latestApi: string }) {
   return (
     <li className="hover:bg-hover relative flex gap-3.5 border-b px-1 py-3.5">
       <PluginIcon name={document.name} image={document.icon ? { src: document.icon, width: 64, height: 64 } : null} />
@@ -115,23 +115,25 @@ function Result({ document }: { document: SearchDocument }) {
           <span>{document.publisherName}</span>
           <span>{formatCount(document.installs)} installs</span>
           {document.updatedAt && <span>Updated {formatDate(document.updatedAt)}</span>}
-          {!document.compatible && <span>Not for this Runesmith</span>}
+          {!document.apis.includes(latestApi) && <span>Not for plugin API {latestApi}</span>}
         </p>
       </div>
     </li>
   );
 }
 
-export function SearchView({ documents, categories, runesmithVersion, fixedCategory }: SearchViewProps) {
+export function SearchView({ documents, categories, apiVersions, fixedCategory }: SearchViewProps) {
   const [state, update] = useSearchState();
+  const latestApi = apiVersions[0] ?? "";
+  const api = selectedApi(state, apiVersions);
   const terms = useTerms(state.query.trim().length > 0);
   const categoryName = fixedCategory ?? categories.find((category) => category.slug === state.category)?.name ?? null;
   const results = useMemo(() => {
     const scores = score(documents, terms, state.query);
     return documents
-      .filter((document) => scores.has(document.id) && matchesFilters(document, state, categoryName))
+      .filter((document) => scores.has(document.id) && matchesFilters(document, state, categoryName, api))
       .sort(compareResults(state.sort, scores));
-  }, [documents, terms, state, categoryName]);
+  }, [documents, terms, state, categoryName, api]);
   const set = (patch: Partial<SearchState>, push = true): void => update({ ...state, ...patch }, push);
   const filtered = writeState({ ...state, query: "", sort: "relevance" }) !== "";
 
@@ -162,12 +164,18 @@ export function SearchView({ documents, categories, runesmithVersion, fixedCateg
           </>
         )}
         <FilterHeading>Compatibility</FilterHeading>
-        <CheckRow
-          id="compatible"
-          label={`Works with Runesmith ${runesmithVersion}`}
-          checked={state.compatible}
-          onChange={(on) => set({ compatible: on })}
-        />
+        <Select
+          aria-label="Works with plugin API"
+          value={api ?? ANY_API}
+          onChange={(event) => set({ api: event.target.value === latestApi ? "" : event.target.value })}
+        >
+          {apiVersions.map((version) => (
+            <option key={version} value={version}>
+              {version === latestApi ? `Plugin API ${version} (latest)` : `Plugin API ${version}`}
+            </option>
+          ))}
+          <option value={ANY_API}>Any plugin API</option>
+        </Select>
         <FilterHeading>Capabilities</FilterHeading>
         {CAPABILITY_FILTERS.map((capability) => (
           <CheckRow
@@ -222,7 +230,7 @@ export function SearchView({ documents, categories, runesmithVersion, fixedCateg
         {results.length > 0 ? (
           <ul className="m-0 list-none p-0" data-testid="results">
             {results.map((document) => (
-              <Result key={document.id} document={document} />
+              <Result key={document.id} document={document} latestApi={latestApi} />
             ))}
           </ul>
         ) : (

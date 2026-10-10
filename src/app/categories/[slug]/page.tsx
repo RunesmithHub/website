@@ -41,7 +41,7 @@ export default async function CategoryPage({ params }: Props) {
       <SearchView
         documents={searchDocuments(data.plugins).filter((document) => document.categories.includes(found.name))}
         categories={data.categories}
-        runesmithVersion={RUNESMITH.version}
+        apiVersions={RUNESMITH.apiVersions}
         fixedCategory={found.name}
       />
     </>

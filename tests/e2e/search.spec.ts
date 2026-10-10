@@ -33,13 +33,34 @@ test("tier and capability filters narrow the results and live in the address", a
   await expect(page.getByRole("checkbox", { name: "No network access" })).not.toBeChecked();
 });
 
-test("category, platform and compatibility filters", async ({ page }) => {
+test("category and platform filters", async ({ page }) => {
   await page.goto("/search?category=themes");
   await expect.poll(async () => (await resultIds(page)).sort()).toEqual(["ember.themes", "pixel.icons"]);
   await page.goto("/search?platform=windows");
   expect(await resultIds(page)).not.toContain("cobalt.docker");
-  await page.goto("/search?compatible=1");
+});
+
+test("the plugin API filter defaults to the latest version and lives in the address", async ({ page }) => {
+  await page.goto("/search");
+  const api = page.getByRole("combobox", { name: "Works with plugin API" });
+  await expect(api).toHaveValue("0.1.1");
+  await expect(api.getByRole("option")).toHaveText(["Plugin API 0.1.1 (latest)", "Plugin API 0.1.0", "Any plugin API"]);
   await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
+  await api.focus();
+  await api.selectOption("0.1.0");
+  await expect(page).toHaveURL(/api=0\.1\.0/);
+  await expect(page.getByTestId("result-count")).toHaveText("11 plugins");
+  const ids = await resultIds(page);
+  expect(ids).not.toContain("tide.formatter");
+  expect(ids).toContain("runesmith.csharp");
+  await api.selectOption("any");
+  await expect(page).toHaveURL(/api=any/);
+  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
+  await page.goBack();
+  await expect(api).toHaveValue("0.1.0");
+  await page.goto("/search?api=0.1.0");
+  await expect(page.getByRole("combobox", { name: "Works with plugin API" })).toHaveValue("0.1.0");
+  await expect(page.getByTestId("result-count")).toHaveText("11 plugins");
 });
 
 test("sorting by name and the shared URL restore the same view", async ({ page }) => {

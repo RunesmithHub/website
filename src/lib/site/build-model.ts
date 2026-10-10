@@ -7,7 +7,7 @@ import {
   entryTargetsVersion,
   isInstallable,
 } from "../hub/states.ts";
-import { apiRangeText, runsOn } from "./compat.ts";
+import { apiRangeText, describeApiRange, supportedApis } from "./compat.ts";
 import { HIGH_RISK_CAPABILITIES, slugify } from "./labels.ts";
 import type {
   AdvisoryView,
@@ -26,7 +26,7 @@ import type {
 } from "./types.ts";
 
 export interface RunesmithRelease {
-  readonly api: string;
+  readonly apiVersions: readonly string[];
   readonly oldestApi: string;
 }
 
@@ -130,7 +130,7 @@ class ModelBuilder {
       return {
         ...this.ref(dependency.id),
         range: dependency.range,
-        rangeText: range ? apiRangeText(dependency.range).replace("Runesmith API ", "") : dependency.range,
+        rangeText: range ? describeApiRange(dependency.range) : dependency.range,
       };
     });
   }
@@ -139,7 +139,8 @@ class ModelBuilder {
     const publisher = this.publishers.get(plugin.publisher);
     const state = effectiveVersionState(plugin, record, publisher, this.entries);
     const blocked = state === "blocked";
-    const { api, oldestApi } = this.inputs.runesmith;
+    const { apiVersions, oldestApi } = this.inputs.runesmith;
+    const apis = supportedApis(record.runesmithApi, apiVersions, oldestApi);
     return {
       version: record.version,
       state,
@@ -150,7 +151,9 @@ class ModelBuilder {
       holdUntil: record.holdUntil ?? null,
       runesmithApi: record.runesmithApi,
       apiText: apiRangeText(record.runesmithApi),
-      compatible: runsOn(record.runesmithApi, api, oldestApi),
+      apiRange: describeApiRange(record.runesmithApi),
+      apis,
+      compatible: apiVersions[0] !== undefined && apis.includes(apiVersions[0]),
       releaseNotes: record.releaseNotes,
       readme: media ? (record.readme ?? null) : null,
       commit: record.commit,
@@ -220,6 +223,8 @@ class ModelBuilder {
       updatedAt: dates.sort().at(-1) ?? null,
       latest: latest?.version ?? null,
       compatible: published.some((version) => version.compatible) || (current?.compatible ?? false),
+      apis: this.inputs.runesmith.apiVersions.filter((api) => published.some((version) => version.apis.includes(api)) || (current?.apis.includes(api) ?? false)),
+      apiRange: current?.apiRange ?? null,
       capabilities: current ? current.capabilities.map((capability) => capability.id) : [],
       platforms: current?.platforms ?? [],
       versions,
@@ -326,7 +331,7 @@ export function searchDocuments(plugins: readonly PluginView[]): SearchDocument[
       categories: plugin.categories,
       capabilities: plugin.capabilities,
       platforms: plugin.platforms,
-      compatible: plugin.compatible,
+      apis: plugin.apis,
       installs: plugin.installs ?? 0,
       updatedAt: plugin.updatedAt ?? "",
       icon: plugin.icon?.small.src ?? null,

@@ -40,9 +40,9 @@ export function PluginSidebar({ plugin, version, securityEmail }: { plugin: Plug
           ))}
         </Row>
         {version && (
-          <Row term="Runesmith">
-            <CompatLabel compatible={version.compatible} />
-            <span className="text-subtle-foreground block text-xs">{version.apiText}</span>
+          <Row term="Compatibility">
+            <CompatLabel compatible={version.compatible} range={version.apiRange} />
+            {version.compatible && <span className="text-subtle-foreground block text-xs">{version.apiText}</span>}
           </Row>
         )}
         <Row term="Platforms">{platformsText(version?.platforms ?? plugin.platforms)}</Row>

@@ -62,6 +62,8 @@ export interface VersionView {
   readonly holdUntil: string | null;
   readonly runesmithApi: string;
   readonly apiText: string;
+  readonly apiRange: string;
+  readonly apis: readonly string[];
   readonly compatible: boolean;
   readonly releaseNotes: string;
   readonly readme: string | null;
@@ -115,6 +117,8 @@ export interface PluginView {
   readonly updatedAt: string | null;
   readonly latest: string | null;
   readonly compatible: boolean;
+  readonly apis: readonly string[];
+  readonly apiRange: string | null;
   readonly capabilities: readonly string[];
   readonly platforms: readonly string[];
   readonly versions: readonly VersionView[];
@@ -199,7 +203,7 @@ export interface SearchDocument {
   readonly categories: readonly string[];
   readonly capabilities: readonly string[];
   readonly platforms: readonly string[];
-  readonly compatible: boolean;
+  readonly apis: readonly string[];
   readonly installs: number;
   readonly updatedAt: string;
   readonly icon: string | null;

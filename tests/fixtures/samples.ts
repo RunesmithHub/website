@@ -124,7 +124,7 @@ export const PLUGINS: readonly SamplePlugin[] = [
     ],
     hosts: ["dotnetcli.azureedge.net", "builds.dotnet.microsoft.com"],
     versions: [
-      { version: "0.1.6", state: "published", daysAgo: 7, reviewed: true, notes: "Faster completion in large solutions." },
+      { version: "0.1.6", state: "published", daysAgo: 7, reviewed: true, api: ">=0.1.1 <0.2.0", notes: "Faster completion in large solutions." },
       { version: "0.1.5", state: "published", daysAgo: 21, reviewed: true },
     ],
   },
@@ -189,7 +189,7 @@ export const PLUGINS: readonly SamplePlugin[] = [
     categories: ["Formatters and linters"], keywords: ["format", "dotnet-format"], license: "MIT", installs: 9340,
     summary: "Formats on save with the formatter your project already uses.",
     capabilities: [{ id: "process", reason: "Runs your project's formatter, such as dotnet format." }],
-    versions: [{ version: "1.8.0", state: "published", daysAgo: 14, reviewed: true }],
+    versions: [{ version: "1.8.0", state: "published", daysAgo: 14, reviewed: true, api: ">=0.1.1 <0.2.0" }],
   },
   {
     id: "lumen.todo", name: "Lumen Todo", tier: "unverified", state: "listed", icon: "lumen.todo", gallery: ["lumen.todo"],
@@ -212,7 +212,7 @@ export const PLUGINS: readonly SamplePlugin[] = [
     ],
     hosts: ["*"],
     versions: [
-      { version: "0.7.0", state: "published", daysAgo: 4, reviewed: false, api: ">=0.2.0 <0.3.0", notes: "Needs Runesmith API 0.2." },
+      { version: "0.7.0", state: "published", daysAgo: 4, reviewed: false, api: ">=0.2.0 <0.3.0", notes: "Needs plugin API 0.2." },
       { version: "0.6.0", state: "published", daysAgo: 10, reviewed: false },
     ],
   },

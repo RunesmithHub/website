@@ -41,8 +41,8 @@ A compatibility line is a set of versions that work with each other: one major v
 
 Wildcards, `latest`, empty ranges and ranges that match nothing are rejected.
 
-## The Runesmith API
+## The plugin API
 
-`runesmithApi` says which Runesmith API versions your plugin works with. Its lowest version is the one the hub builds against, and the range
-must stay within one compatibility line. To support a new Runesmith API line, release a new version for it. Each version's page shows which
-Runesmith releases it runs on.
+`runesmithApi` says which plugin API versions your plugin works with. Its lowest version is the one the hub builds against, and the range
+must stay within one compatibility line. To support a new plugin API line, release a new version for it. Each version's page shows whether it
+works with the latest plugin API, and search can filter plugins by plugin API version.
