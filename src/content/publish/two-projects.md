@@ -20,7 +20,7 @@ A plugin with nothing to share still has a contracts project. It can be empty.
 
 The Runesmith plugin template creates both projects, turns on NuGet lock files, adds an empty contracts project, a placeholder icon, a README
 and a CI workflow that runs the [hub check tool](/publish/check-tool). See
-[Create a plugin](https://runesmithhub.github.io/Runesmith/plugins/create-a-plugin) in the Runesmith documentation.
+[Create a plugin](https://docs.runesmith.dev/plugins/create-a-plugin) in the Runesmith documentation.
 
 ## What the repository needs
 
