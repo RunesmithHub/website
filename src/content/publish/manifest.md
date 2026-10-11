@@ -52,6 +52,34 @@ it and adds what only the build knows to the copy inside the package. Unknown fi
 | `categories` | Yes | 1 to 3 categories from the hub's list |
 | `keywords` | No | Up to 10 lowercase words, used by search |
 | `deprecated` | No | A `reason` and an optional `replacement` plugin ID. See [Yanking and deprecating](/publish/yanking-and-deprecating) |
+| `languages` | No | The BCP 47 tags of the languages of your own translations, English included. See Languages below |
+| `languagePack` | No | Marks a language pack: its `language`, `name` and `englishName`. See Languages below |
+
+## Languages
+
+A plugin that carries its own translations lists their languages in `languages`, as BCP 47 tags such as `en`, `nl` or `pt-BR`:
+
+```json
+"languages": ["en", "nl"]
+```
+
+The list includes `en`, the English source the other languages translate, and has at most 100 languages. The hub checks it against the
+Fluent files your implementation embeds as `locales/<language>/<file>.ftl`: every listed language needs at least one file, and a file in a
+language you did not list fails the check. Leave `languages` out when your plugin is not translated. See
+[Localization](https://docs.runesmith.dev/plugins/localization) in the Runesmith documentation.
+
+A language pack translates Runesmith and other plugins into one language. It declares `languagePack` instead, with the language's tag, its
+name in that language and its name in English, each name at most 40 characters:
+
+```json
+"languagePack": { "language": "nl", "name": "Nederlands", "englishName": "Dutch" }
+```
+
+A language pack has no `languages`, `capabilities` or `dependencies`, and embeds only files named
+`locales/<language>/<target>/<file>.ftl`, where the target is `runesmith` or a plugin ID. It translates at most 100 targets. See
+[Language packs](https://docs.runesmith.dev/plugins/language-packs).
+
+The plugin's page shows its languages, or for a language pack what it translates, and search can filter by language.
 
 ## Categories
 
