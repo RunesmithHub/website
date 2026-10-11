@@ -9,7 +9,7 @@ test("typing searches by name, keyword and with typos", async ({ page }) => {
   await page.goto("/search");
   const input = page.getByRole("searchbox", { name: "Search plugins" }).last();
   await input.fill("harbor");
-  await expect(page.getByTestId("result-count")).not.toHaveText("12 plugins");
+  await expect(page.getByTestId("result-count")).not.toHaveText("13 plugins");
   expect((await resultIds(page))[0]).toBe("harbor.issues");
   await input.fill("docker");
   await expect.poll(() => resultIds(page)).toEqual(["cobalt.docker"]);
@@ -22,14 +22,14 @@ test("typing searches by name, keyword and with typos", async ({ page }) => {
 
 test("tier and capability filters narrow the results and live in the address", async ({ page }) => {
   await page.goto("/search");
-  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("13 plugins");
   await page.getByRole("checkbox", { name: "Official" }).click();
-  await expect(page.getByTestId("result-count")).toHaveText("3 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("4 plugins");
   await expect(page).toHaveURL(/tier=official/);
   await page.getByRole("checkbox", { name: "No network access" }).click();
-  await expect.poll(() => resultIds(page)).toEqual(["runesmith.git"]);
+  await expect.poll(() => resultIds(page)).toEqual(["runesmith.git", "runesmith.dutch"]);
   await page.goBack();
-  await expect(page.getByTestId("result-count")).toHaveText("3 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("4 plugins");
   await expect(page.getByRole("checkbox", { name: "No network access" })).not.toBeChecked();
 });
 
@@ -45,22 +45,22 @@ test("the plugin API filter defaults to the latest version and lives in the addr
   const api = page.getByRole("combobox", { name: "Works with plugin API" });
   await expect(api).toHaveValue("0.1.1");
   await expect(api.getByRole("option")).toHaveText(["Plugin API 0.1.1 (latest)", "Plugin API 0.1.0", "Any plugin API"]);
-  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("13 plugins");
   await api.focus();
   await api.selectOption("0.1.0");
   await expect(page).toHaveURL(/api=0\.1\.0/);
-  await expect(page.getByTestId("result-count")).toHaveText("11 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
   const ids = await resultIds(page);
   expect(ids).not.toContain("tide.formatter");
   expect(ids).toContain("runesmith.csharp");
   await api.selectOption("any");
   await expect(page).toHaveURL(/api=any/);
-  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("13 plugins");
   await page.goBack();
   await expect(api).toHaveValue("0.1.0");
   await page.goto("/search?api=0.1.0");
   await expect(page.getByRole("combobox", { name: "Works with plugin API" })).toHaveValue("0.1.0");
-  await expect(page.getByTestId("result-count")).toHaveText("11 plugins");
+  await expect(page.getByTestId("result-count")).toHaveText("12 plugins");
 });
 
 test("sorting by name and the shared URL restore the same view", async ({ page }) => {

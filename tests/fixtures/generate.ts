@@ -128,6 +128,8 @@ function versionRecord(plugin: SamplePlugin, sample: SampleVersion, now: Date): 
     license: plugin.license,
     reportUrl: `https://github.com/RunesmithHub/registry/issues/${300 + sample.daysAgo}`,
     ...(sample.yankReason ? { yankReason: sample.yankReason } : {}),
+    ...(plugin.languages ? { languages: plugin.languages } : {}),
+    ...(plugin.languagePack ? { languagePack: plugin.languagePack } : {}),
   };
 }
 

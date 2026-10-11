@@ -26,6 +26,8 @@ export interface SamplePlugin {
   readonly platforms?: readonly string[];
   readonly dependencies?: readonly { readonly id: string; readonly range: string }[];
   readonly deprecated?: { readonly reason: string; readonly replacement?: string };
+  readonly languages?: readonly string[];
+  readonly languagePack?: { readonly language: string; readonly name: string; readonly englishName: string; readonly targets: readonly string[] };
   readonly installs: number;
   readonly versions: readonly SampleVersion[];
 }
@@ -133,6 +135,7 @@ export const PLUGINS: readonly SamplePlugin[] = [
     keywords: ["git", "vcs"], license: "Apache-2.0", installs: 51930,
     summary: "Commit, branch, fetch, history and diffs for Git repositories.",
     capabilities: [{ id: "process", reason: "Runs git for operations the library does not cover." }],
+    languages: ["en", "nl", "de"],
     versions: [
       { version: "0.3.4", state: "published", daysAgo: 11, reviewed: true },
       { version: "0.3.3", state: "published", daysAgo: 38, reviewed: true },
@@ -149,6 +152,13 @@ export const PLUGINS: readonly SamplePlugin[] = [
     ],
     hosts: ["github.com", "api.github.com"], dependencies: [{ id: "runesmith.git", range: ">=0.3.0 <0.4.0" }],
     versions: [{ version: "0.2.1", state: "published", daysAgo: 5, reviewed: true }],
+  },
+  {
+    id: "runesmith.dutch", name: "Dutch Language Pack", tier: "official", state: "listed", icon: "runesmith", categories: ["Other"],
+    keywords: ["dutch", "nederlands"], license: "Apache-2.0", installs: 6120,
+    summary: "Runesmith and its GitHub plugin in Dutch.", capabilities: [],
+    languagePack: { language: "nl", name: "Nederlands", englishName: "Dutch", targets: ["runesmith", "runesmith.github"] },
+    versions: [{ version: "0.1.0", state: "published", daysAgo: 6, reviewed: true }],
   },
   {
     id: "harbor.issues", name: "Harbor Issues", tier: "verified", state: "listed", icon: "harbor.issues", banner: true,
