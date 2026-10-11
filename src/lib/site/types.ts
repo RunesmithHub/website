@@ -52,6 +52,31 @@ export interface DependencyView extends PluginRef {
   readonly rangeText: string;
 }
 
+export interface LanguageView {
+  readonly tag: string;
+  readonly name: string;
+  readonly englishName: string;
+  readonly label: string;
+}
+
+/** Runesmith or a plugin that a language pack translates, with the page to link to, if any. */
+export interface TranslationTarget {
+  readonly id: string;
+  readonly name: string;
+  readonly href: string | null;
+}
+
+export interface LanguagePackView {
+  readonly language: LanguageView;
+  readonly targets: readonly TranslationTarget[];
+}
+
+/** A language that language packs add to a plugin that does not carry it itself. */
+export interface PackTranslation {
+  readonly language: LanguageView;
+  readonly packs: readonly PluginRef[];
+}
+
 export interface VersionView {
   readonly version: string;
   readonly state: VersionState;
@@ -86,6 +111,9 @@ export interface VersionView {
   readonly license: string | null;
   readonly reportUrl: string | null;
   readonly yankReason: string | null;
+  /** The languages of the version's own translations, English first; empty for a language pack. */
+  readonly languages: readonly LanguageView[];
+  readonly languagePack: LanguagePackView | null;
 }
 
 export interface ModerationNotice {
@@ -121,6 +149,9 @@ export interface PluginView {
   readonly apiRange: string | null;
   readonly capabilities: readonly string[];
   readonly platforms: readonly string[];
+  readonly languages: readonly LanguageView[];
+  readonly languagePack: LanguagePackView | null;
+  readonly translations: readonly PackTranslation[];
   readonly versions: readonly VersionView[];
   readonly dependents: readonly PluginRef[];
   readonly advisoryIds: readonly number[];
@@ -186,6 +217,8 @@ export interface SiteData {
   readonly holdHours: number;
   readonly categories: readonly CategoryView[];
   readonly capabilities: readonly CapabilityInfo[];
+  /** The languages other than English that listed plugins can be used in. */
+  readonly languages: readonly LanguageView[];
   readonly plugins: readonly PluginView[];
   readonly publishers: readonly PublisherView[];
   readonly advisories: readonly AdvisoryView[];
@@ -204,6 +237,9 @@ export interface SearchDocument {
   readonly capabilities: readonly string[];
   readonly platforms: readonly string[];
   readonly apis: readonly string[];
+  /** The tags of the languages the plugin can be used in: its own, those language packs add, and the one it adds as a pack. */
+  readonly languages: readonly string[];
+  readonly languagePack: boolean;
   readonly installs: number;
   readonly updatedAt: string;
   readonly icon: string | null;

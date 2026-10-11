@@ -11,12 +11,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { compareResults, score, type SortOrder } from "@/lib/search/score";
-import { ANY_API, EMPTY_STATE, matchesFilters, readState, selectedApi, writeState, type SearchState } from "@/lib/search/state";
+import {
+  ANY_API,
+  EMPTY_STATE,
+  languageOptions,
+  matchesFilters,
+  readState,
+  selectedApi,
+  selectedLanguage,
+  writeState,
+  type SearchState,
+} from "@/lib/search/state";
 import { formatCount, formatDate } from "@/lib/site/format";
 import { CAPABILITY_FILTERS, PLATFORM_LABELS, TIER_LABELS } from "@/lib/site/labels";
-import type { CategoryView, SearchDocument, SearchTerms, Tier } from "@/lib/site/types";
+import type { CategoryView, LanguageView, SearchDocument, SearchTerms, Tier } from "@/lib/site/types";
 
 const ALL = "all";
+const ANY_LANGUAGE = "";
 const SORT_LABELS: Readonly<Record<SortOrder, string>> = {
   relevance: "Relevance",
   installs: "Most installed",
@@ -28,6 +39,7 @@ interface SearchViewProps {
   readonly documents: readonly SearchDocument[];
   readonly categories: readonly CategoryView[];
   readonly apiVersions: readonly string[];
+  readonly languages: readonly LanguageView[];
   readonly fixedCategory?: string;
 }
 
@@ -115,6 +127,7 @@ function Result({ document, latestApi }: { document: SearchDocument; latestApi: 
           <span>{document.publisherName}</span>
           <span>{formatCount(document.installs)} installs</span>
           {document.updatedAt && <span>Updated {formatDate(document.updatedAt)}</span>}
+          {document.languagePack && <span>Language pack</span>}
           {!document.apis.includes(latestApi) && <span>Not for plugin API {latestApi}</span>}
         </p>
       </div>
@@ -122,18 +135,21 @@ function Result({ document, latestApi }: { document: SearchDocument; latestApi: 
   );
 }
 
-export function SearchView({ documents, categories, apiVersions, fixedCategory }: SearchViewProps) {
+export function SearchView({ documents, categories, apiVersions, languages, fixedCategory }: SearchViewProps) {
   const [state, update] = useSearchState();
   const latestApi = apiVersions[0] ?? "";
   const api = selectedApi(state, apiVersions);
   const terms = useTerms(state.query.trim().length > 0);
   const categoryName = fixedCategory ?? categories.find((category) => category.slug === state.category)?.name ?? null;
+  const languageChoices = useMemo(() => languageOptions(documents, languages), [documents, languages]);
+  const language = selectedLanguage(state, languageChoices);
+  const hasLanguagePacks = documents.some((document) => document.languagePack);
   const results = useMemo(() => {
     const scores = score(documents, terms, state.query);
     return documents
-      .filter((document) => scores.has(document.id) && matchesFilters(document, state, categoryName, api))
+      .filter((document) => scores.has(document.id) && matchesFilters(document, state, categoryName, api, language))
       .sort(compareResults(state.sort, scores));
-  }, [documents, terms, state, categoryName, api]);
+  }, [documents, terms, state, categoryName, api, language]);
   const set = (patch: Partial<SearchState>, push = true): void => update({ ...state, ...patch }, push);
   const filtered = writeState({ ...state, query: "", sort: "relevance" }) !== "";
 
@@ -195,6 +211,20 @@ export function SearchView({ documents, categories, apiVersions, fixedCategory }
             </option>
           ))}
         </Select>
+        {(languageChoices.length > 0 || hasLanguagePacks) && <FilterHeading>Language</FilterHeading>}
+        {languageChoices.length > 0 && (
+          <Select aria-label="Language" value={language ?? ANY_LANGUAGE} onChange={(event) => set({ language: event.target.value })}>
+            <option value={ANY_LANGUAGE}>Any language</option>
+            {languageChoices.map((choice) => (
+              <option key={choice.tag} value={choice.tag}>
+                {choice.label}
+              </option>
+            ))}
+          </Select>
+        )}
+        {hasLanguagePacks && (
+          <CheckRow id="type-language-pack" label="Language packs only" checked={state.languagePacks} onChange={(on) => set({ languagePacks: on })} />
+        )}
         {filtered && (
           <Button variant="link" className="mt-4 text-xs" onClick={() => update({ ...EMPTY_STATE, query: state.query, sort: state.sort }, true)}>
             Clear filters

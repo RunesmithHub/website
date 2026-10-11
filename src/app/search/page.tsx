@@ -13,7 +13,7 @@ export default function SearchPage() {
     <>
       <h1 className="sr-only">Search plugins</h1>
       {data.status.available ? (
-        <SearchView documents={searchDocuments(data.plugins)} categories={data.categories} apiVersions={RUNESMITH.apiVersions} />
+        <SearchView documents={searchDocuments(data.plugins)} categories={data.categories} apiVersions={RUNESMITH.apiVersions} languages={data.languages} />
       ) : (
         <IndexUnavailable />
       )}

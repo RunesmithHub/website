@@ -4,7 +4,7 @@ import { RUNESMITH } from "../src/config/runesmith.ts";
 import { DirectorySource, HttpSource, type IndexSource } from "../src/lib/hub/source.ts";
 import { loadVerifiedIndex } from "../src/lib/hub/verify.ts";
 import type { VerifiedIndex } from "../src/lib/hub/model.ts";
-import { buildSiteModel, categoriesOf, searchDocuments, VISIBLE } from "../src/lib/site/build-model.ts";
+import { buildSiteModel, categoriesOf, searchDocuments, searchKeywords, VISIBLE } from "../src/lib/site/build-model.ts";
 import { buildTerms } from "../src/lib/search/terms.ts";
 import type { PluginView, SiteData } from "../src/lib/site/types.ts";
 import { AssetStore, downloadAvatar } from "./lib/assets.ts";
@@ -31,6 +31,7 @@ function unavailable(reason: string): SiteData {
     holdHours: 24,
     categories: [],
     capabilities: [],
+    languages: [],
     plugins: [],
     publishers: [],
     advisories: [],
@@ -91,7 +92,7 @@ async function available(settings: BuildConfig, trustedRootPath: string): Promis
   });
 
   const documents = searchDocuments(model.plugins);
-  const keywords = new Map(model.plugins.map((plugin) => [plugin.id, plugin.keywords]));
+  const keywords = new Map(model.plugins.map((plugin) => [plugin.id, searchKeywords(plugin)]));
   await writeJson(
     path.join(publicDir, "search", "terms.json"),
     buildTerms(documents.map((document) => ({ document, keywords: keywords.get(document.id) ?? [] }))),
@@ -123,6 +124,7 @@ async function available(settings: BuildConfig, trustedRootPath: string): Promis
     holdHours: index.policy.holdHours,
     categories: categoriesOf(index.policy.categories, model.plugins),
     capabilities: Object.entries(index.policy.capabilities).map(([id, value]) => ({ id, label: value.label })),
+    languages: model.languages,
     plugins: model.plugins,
     publishers: model.publishers,
     advisories: model.advisories,

@@ -42,6 +42,7 @@ export default async function CategoryPage({ params }: Props) {
         documents={searchDocuments(data.plugins).filter((document) => document.categories.includes(found.name))}
         categories={data.categories}
         apiVersions={RUNESMITH.apiVersions}
+        languages={data.languages}
         fixedCategory={found.name}
       />
     </>

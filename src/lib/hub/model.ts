@@ -141,6 +141,15 @@ export interface Dependency {
   readonly range: string;
 }
 
+export const RUNESMITH_TARGET = "runesmith";
+
+export interface LanguagePack {
+  readonly language: string;
+  readonly name: string;
+  readonly englishName: string;
+  readonly targets: readonly string[];
+}
+
 export interface VersionRecord {
   readonly version: string;
   readonly state: VersionState;
@@ -177,6 +186,8 @@ export interface VersionRecord {
   readonly license?: string;
   readonly reportUrl?: string;
   readonly yankReason?: string;
+  readonly languages?: readonly string[];
+  readonly languagePack?: LanguagePack;
 }
 
 export interface PluginRecord {

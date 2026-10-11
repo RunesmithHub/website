@@ -37,6 +37,7 @@ import {
   type Download,
   type GalleryImage,
   type ImageRef,
+  type LanguagePack,
   type MetaReference,
   type ModerationEntry,
   type ModerationPayload,
@@ -239,6 +240,24 @@ function attestation(source: JsonObject, path: string): string | undefined {
   return readOptionalString(asObject(value, `${path}.attestation`), "url", `${path}.attestation`);
 }
 
+function languages(source: JsonObject, path: string): string[] | undefined {
+  return optionalField(source, "languages") === undefined ? undefined : readStringArray(source, "languages", path);
+}
+
+function languagePack(source: JsonObject, path: string): LanguagePack | undefined {
+  const value = readOptionalObject(source, "languagePack", path);
+  if (!value) {
+    return undefined;
+  }
+  const packPath = `${path}.languagePack`;
+  return {
+    language: readString(value, "language", packPath),
+    name: readString(value, "name", packPath),
+    englishName: readString(value, "englishName", packPath),
+    targets: readStringArray(value, "targets", packPath),
+  };
+}
+
 function versionRecord(value: unknown, path: string): VersionRecord {
   const source = asObject(value, path);
   const review = readObject(source, "review", path);
@@ -306,6 +325,8 @@ function versionRecord(value: unknown, path: string): VersionRecord {
     license: readOptionalString(source, "license", path),
     reportUrl: readOptionalString(source, "reportUrl", path),
     yankReason: readOptionalString(source, "yankReason", path),
+    languages: languages(source, path),
+    languagePack: languagePack(source, path),
   };
 }
 
