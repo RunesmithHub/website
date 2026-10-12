@@ -43,8 +43,8 @@ test("category and platform filters", async ({ page }) => {
 test("the plugin API filter defaults to the latest version and lives in the address", async ({ page }) => {
   await page.goto("/search");
   const api = page.getByRole("combobox", { name: "Works with plugin API" });
-  await expect(api).toHaveValue("0.1.4");
-  await expect(api.getByRole("option")).toHaveText(["Plugin API 0.1.4 (latest)", "Plugin API 0.1.3", "Plugin API 0.1.2", "Plugin API 0.1.1", "Plugin API 0.1.0", "Any plugin API"]);
+  await expect(api).toHaveValue("0.2.0");
+  await expect(api.getByRole("option")).toHaveText(["Plugin API 0.2.0 (latest)", "Plugin API 0.1.4", "Plugin API 0.1.3", "Plugin API 0.1.2", "Plugin API 0.1.1", "Plugin API 0.1.0", "Any plugin API"]);
   await expect(page.getByTestId("result-count")).toHaveText("13 plugins");
   await api.focus();
   await api.selectOption("0.1.0");
