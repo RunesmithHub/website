@@ -13,3 +13,6 @@ audit:
   ignore:
     # braces <=3.0.3 has no fixed release; reached only through eslint-config-next's glob of this repository's own paths. Remove by 2027-01-31.
     - GHSA-vfj7-8cjw-p6xm
+minimumReleaseAgeExclude:
+  # Renovate security update: next@16.4.1
+  - next@16.4.1
